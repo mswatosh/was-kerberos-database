@@ -6,11 +6,18 @@ RUN yum -y install krb5-workstation krb5-libs krb5-auth-dialog
 ADD docker-entrypoint.sh /
 RUN chmod a+x /docker-entrypoint.sh
 
+RUN mkdir /var/custom
+COPY var/custom/createschema.sh /var/custom/createschema.sh
+RUN chmod a+x /var/custom/createschema.sh
+
 ENV LICENSE=accept
-ENV DB2INSTANCE=username
+ENV DB2INSTANCE=db2user
 ENV DB2INST1_PASSWORD=password
 ENV DBNAME=testdb
 ENV AUTOCONFIG=false
 ENV ARCHIVE_LOGS=false
+
+RUN mkdir /etc/krb5
+RUN printf 'add_entry -password -p db2user/db2@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -1,4 +1,6 @@
 version: '3'
+volumes:
+    krb5kdc-data:
 services:
   websphere:
     build: websphere-traditional
@@ -15,8 +17,9 @@ services:
     environment:
       - KRB5_REALM=EXAMPLE.COM
       - KRB5_KDC=kerberos
+    privileged: True
   kerberos:
-    image: "gcavalcante8808/krb5-server"
+    build: kdc-server
     ports:
       - "88:88"
       - "464:464"
@@ -25,3 +28,5 @@ services:
       - KRB5_REALM=EXAMPLE.COM
       - KRB5_KDC=localhost
       - KRB5_PASS=password
+    volumes:
+      - krb5kdc-data:/var/lib/krb5kdc
