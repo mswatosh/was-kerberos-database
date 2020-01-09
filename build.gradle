@@ -1,0 +1,95 @@
+apply plugin: 'war'
+apply plugin: 'liberty'
+apply plugin: 'docker-compose'
+group = 'com.example.liberty.kerberos'
+version = '1.0-SNAPSHOT'
+description = "Kerberos App for Liberty"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+buildDir = 'liberty/build'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:2.6.3'
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.10.4"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    providedCompile group:'javax.servlet', name:'javax.servlet-api', version:'4.0.1'
+    providedCompile group: 'javax.enterprise', name: 'cdi-api', version: '2.0'
+    compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3'
+    testCompile group:'commons-httpclient', name:'commons-httpclient', version:'3.1'
+    testCompile group:'junit', name:'junit', version:'4.12'
+    libertyRuntime group:'io.openliberty', name:'openliberty-runtime', version:'[17.0.0.4,)'
+    runtime group: 'com.ibm.db2.jcc', name: 'db2jcc', version: 'db2jcc4'
+}
+
+task copyDependencies(type: Copy) {
+   from configurations.runtime
+   include 'db2jcc*'
+   rename 'db2jcc(.*)', 'db2jcc.jar'
+   into 'liberty/build/dependencies'
+}
+
+ext {
+    appName = project.name
+    testServerHttpPort = 9080
+    testServerHttpsPort = 9443
+    warContext = appName
+}
+
+liberty {
+    server {
+        name = "defaultServer"
+
+        configFile = file("liberty/server.xml")
+
+        bootstrapProperties = ['default.http.port': testServerHttpPort,
+                               'default.https.port': testServerHttpsPort,
+                               'app.context.root': warContext]
+
+        packageLiberty {
+            archive = "$buildDir/${appName}.zip"
+            include = "usr"
+        }
+    }
+}
+
+ext.appExcludes = []
+
+task loginJar(type: Jar) {
+    from(sourceSets.main.output) {
+        include "com/example/login/**"
+        project.ext.appExcludes.addAll(includes)
+        archiveFileName = "krb5LoginModule.jar"
+    }
+}
+
+war {
+    from (sourceSets.main.output) {
+        archiveName = "${baseName}.${extension}"
+        exclude project.ext.appExcludes
+    }
+}
+
+clean.dependsOn 'libertyStop'
+libertyPackage.dependsOn 'libertyStop'
+libertyPackage.dependsOn 'copyDependencies'
+libertyPackage.dependsOn 'loginJar'
+composeUp.dependsOn 'libertyPackage'
+composeUp.dependsOn 'composeDown'
+composeUp.dependsOn 'composeBuild'

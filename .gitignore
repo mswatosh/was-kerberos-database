@@ -1,1 +1,9 @@
-.vscode
+/.vscode
+/.gradle
+/bin
+/liberty/build
+/liberty/updates
+/build
+.classpath
+.project
+.settings/
