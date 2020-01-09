@@ -10,7 +10,7 @@ May require OpenJ9 Java 8. Tested with OpenJ9/OpenJDK 1.8.0_232
 ### Liberty
 **Liberty doesn't support accessing databases using kerberos**
 ```
-gradle libertyPackage
+./gradlew libertyPackage
 docker-compose build
 docker-compose up
 ```
