@@ -21,7 +21,7 @@
 	<jaasLoginModule id="krb5LoginModule" className="com.ibm.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
     <options credsType="both" useKeytab="/etc/krb5.keytab" principal="db2user/db2@EXAMPLE.COM"/>
   </jaasLoginModule>
-  <dataSource id="DefaultDataSource"> <!--jaasLoginContextEntry="krb5JAASLoginEntry">-->
+  <dataSource id="db2ds" jndiName="jdbc/db2ds"> <!--jaasLoginContextEntry="krb5JAASLoginEntry">-->
     <jdbcDriver libraryRef="DB2JCCLib"/>
     <properties.db2.jcc databaseName="TESTDB" serverName="db2" portNumber="50000"/> <!--securityMechanism="11" KerberosServerPrincipal="db2user/db2@EXAMPLE.COM"/>-->
     <containerAuthData user="db2user"  password="password"/>

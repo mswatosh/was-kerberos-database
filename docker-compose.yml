@@ -2,14 +2,14 @@ version: '3'
 volumes:
     krb5kdc-data:
 services:
-#  websphere:
-#    build: websphere-traditional
-#    ports:
-#      - "9043:9043"
-#      - "9443:9443"
-#    environment:
-#      - KRB5_REALM=EXAMPLE.COM
-#      - KRB5_KDC=kerberos
+  websphere:
+    build: websphere-traditional
+    ports:
+      - "9043:9043"
+      - "9443:9443"
+    environment:
+      - KRB5_REALM=EXAMPLE.COM
+      - KRB5_KDC=kerberos
   liberty:
     build: liberty
     ports:
@@ -21,7 +21,7 @@ services:
     depends_on: 
       - "db2"
     volumes:
-      - /Users/mjswatos/docker/logs:/logs
+    - /Users/mjswatos/docker/logs:/logs
   db2:
     build: db2
     ports:

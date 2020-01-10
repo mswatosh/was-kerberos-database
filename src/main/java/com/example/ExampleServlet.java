@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @WebServlet("/example")
 public class ExampleServlet extends HttpServlet { 
 
-    @Resource 
+    @Resource(name = "jdbc/db2ds")
     DataSource ds;
 
     private static final long serialVersionUID = 1L;

@@ -33,4 +33,4 @@ cat <<EOT > /etc/krb5.conf
  }
 EOT
 
-/bin/sh -c /work/configure.sh
+/bin/sh -c /work/start_server.sh

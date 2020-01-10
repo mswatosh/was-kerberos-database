@@ -6,6 +6,7 @@ RUN chmod a+x /docker-entrypoint.sh
 
 USER root
 
+RUN apt-get update
 RUN apt-get install -y krb5-user libpam-krb5 libpam-ccreds auth-client-config
 RUN chmod 777 /etc
 RUN mkdir /etc/krb5
