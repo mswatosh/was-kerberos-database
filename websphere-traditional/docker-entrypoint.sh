@@ -33,4 +33,6 @@ cat <<EOT > /etc/krb5.conf
  }
 EOT
 
+/work/configure.sh /work/config/kerberos.py
+
 /bin/sh -c /work/start_server.sh

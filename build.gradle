@@ -1,4 +1,5 @@
 apply plugin: 'war'
+apply plugin: 'ear'
 apply plugin: 'liberty'
 apply plugin: 'docker-compose'
 group = 'com.example.liberty.kerberos'
@@ -38,11 +39,18 @@ dependencies {
     runtime group: 'com.ibm.db2.jcc', name: 'db2jcc', version: 'db2jcc4'
 }
 
-task copyDependencies(type: Copy) {
+task copyDependenciesLiberty(type: Copy) {
    from configurations.runtime
    include 'db2jcc*'
    rename 'db2jcc(.*)', 'db2jcc.jar'
    into 'liberty/build/dependencies'
+}
+
+task copyDependenciesWebSphere(type: Copy) {
+   from configurations.runtime
+   include 'db2jcc*'
+   rename 'db2jcc(.*)', 'db2jcc.jar'
+   into 'websphere-traditional/build/dependencies'
 }
 
 ext {
@@ -79,6 +87,11 @@ task loginJar(type: Jar) {
     }
 }
 
+task packageWebSphere(type: Copy) {
+    from "liberty/build"
+    into "websphere-traditional/build"
+}
+
 war {
     from (sourceSets.main.output) {
         archiveName = "${baseName}.${extension}"
@@ -88,8 +101,10 @@ war {
 
 clean.dependsOn 'libertyStop'
 libertyPackage.dependsOn 'libertyStop'
-libertyPackage.dependsOn 'copyDependencies'
+libertyPackage.dependsOn 'copyDependenciesLiberty'
+libertyPackage.dependsOn 'copyDependenciesWebSphere'
 libertyPackage.dependsOn 'loginJar'
 composeUp.dependsOn 'libertyPackage'
 composeUp.dependsOn 'composeDown'
 composeUp.dependsOn 'composeBuild'
+libertyPackage.finalizedBy 'packageWebSphere'

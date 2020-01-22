@@ -7,25 +7,37 @@
 The docker compose environment sets up a KDC (working), Database (DB2, probably working), and an application server (Liberty or WebSphere traditional, **not working**) with kerberos configured in each image. 
 
 May require OpenJ9 Java 8. Tested with OpenJ9/OpenJDK 1.8.0_232
-### Liberty
-**Liberty doesn't support accessing databases using kerberos**
+
+Bring up the environment with:
 ```
 ./gradlew libertyPackage
 docker-compose build
 docker-compose up
 ```
+### Liberty (Currently disabled)
+**Liberty doesn't support accessing databases using kerberos**
+
 Once the environment is up (db2 usually takes the longest to start) this endpoint can be used to access the database:  
 http://localhost:9080/was-kerberos-database/example
 Which will respond with:  `java.sql.SQLInvalidAuthorizationSpecException: [jcc][t4][201][11237][4.25.13] Connection authorization failure occurred. Reason: Security mechanism not supported. `  
 This shows that DB2 won't accept user/password, because it is expecting kerberos authentication.
 
 ### WebSphere traditional
-**Not working. Still needs kerberos/datasource config and a test app**   
-This is commented out in the `docker-compose.yml` file, so it won't start.
+**Not working. Needs kerberos errors investigated**   
+
+Also needs `./gradlew libertyPackage` run to copy the db2 driver and app to the correct directory.
+
+`keberos.py` is the admin script for configuring kerberos and datasources  
+`installApps.py` is the admin script for installing the application
 
 Admin Console: https://localhost:9043/ibm/console/  
 User: wsadmin  
 Password: password
+
+The application can be accessed at the endpoint:  
+`http://localhost:9080/was-kerberos-database/example`
+
+/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython
 
 ### Kerberos
 Realm: EXAMPLE.COM

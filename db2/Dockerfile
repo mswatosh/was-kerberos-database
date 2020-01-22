@@ -19,5 +19,6 @@ ENV ARCHIVE_LOGS=false
 
 RUN mkdir /etc/krb5
 RUN printf 'add_entry -password -p db2user/db2@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
+RUN printf 'add_entry -password -p db2user/websphere@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
