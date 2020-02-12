@@ -24,6 +24,7 @@ This shows that DB2 won't accept user/password, because it is expecting kerberos
 
 ### WebSphere traditional
 **Not working. Needs kerberos errors investigated**   
+WAS side driver config??
 
 Also needs `./gradlew libertyPackage` run to copy the db2 driver and app to the correct directory.
 
@@ -40,8 +41,9 @@ The application can be accessed at the endpoint:
 /opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython
 
 ### Kerberos
-Realm: EXAMPLE.COM
+Realm: EXAMPLE.COM  
 User: db2user/db2@EXAMPLE.COM
+User: db2user/websphere@EXAMPLE.COM
 
 
 ### DB2

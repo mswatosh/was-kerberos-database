@@ -11,9 +11,12 @@ services:
     environment:
       - KRB5_REALM=EXAMPLE.COM
       - KRB5_KDC=kerberos
+      - ENABLE_BASIC_LOGGING=true
     networks:
       krbnet:
         ipv4_address: 10.5.0.2
+    volumes:
+      - ./trace/twas/logs:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/logs
 #  liberty:
 #    build: liberty
 #    ports:
