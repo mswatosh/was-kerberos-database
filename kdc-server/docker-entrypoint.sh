@@ -94,6 +94,10 @@ EOT
     echo "Creating wsadmin/websphere Account"
     kadmin.local -q "addprinc -pw ${KRB5_PASS} wsadmin/websphere@${KRB5_REALM}"
 
+    echo "Creating wsadmin/websphere Account"
+    kadmin.local -q "addprinc -pw ${KRB5_PASS} wsadmin@${KRB5_REALM}"
+
+
 fi
 
 
