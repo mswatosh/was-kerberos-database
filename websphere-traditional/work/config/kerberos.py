@@ -7,7 +7,8 @@ AdminTask.applyWizardSettings('[-secureApps true -secureLocalResources false -ad
 AdminConfig.save()
 
 #Map users
-AdminApp.edit('was-kerberos-database_war', '[ -MapRolesToUsers [[ Manager AppDeploymentOption.No AppDeploymentOption.No wsadmin "" AppDeploymentOption.No user:defaultWIMFileBasedRealm/uid=wsadmin,o=defaultWIMFileBasedRealm "" ]]]' ) 
+AdminTask.createUser('[-uid db2user/websphere -cn db2 -sn user -password password -confirmPassword password]')
+AdminApp.edit('was-kerberos-database_war', '[ -MapRolesToUsers [[ Manager AppDeploymentOption.No AppDeploymentOption.No wsadmin|db2user/websphere "" AppDeploymentOption.No user:defaultWIMFileBasedRealm/uid=wsadmin,o=defaultWIMFileBasedRealm|user:defaultWIMFileBasedRealm/uid=db2user/websphere,o=defaultWIMFileBasedRealm "" ]]]' )
 
 #Configure Kerberos
 AdminTask.createKrbAuthMechanism('[-krb5Realm EXAMPLE.COM -krb5Config /etc/krb5.conf -krb5Keytab /etc/krb5.keytab -serviceName db2user -trimUserName true -enabledGssCredDelegate true -allowKrbAuthForCsiInbound true -allowKrbAuthForCsiOutbound true ]') 
@@ -40,7 +41,7 @@ server = AdminConfig.getid('/Server:'+serverName+'/')
 print server
 tc = AdminConfig.list('TraceService', server)
 print tc
-traceSpec = "*=info: WAS.j2c=all: RRA=all"
+traceSpec = "*=info: WAS.j2c=all: RRA=all :com.ibm.ws.security.*=all:com.ibm.websphere.security.*=all"
 print traceSpec
 attrs = [["startupTraceSpecification", traceSpec]]
 print attrs
