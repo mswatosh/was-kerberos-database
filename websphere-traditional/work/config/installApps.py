@@ -5,7 +5,6 @@ AdminApp.install('/work/app/was-kerberos-database.war', '[ -nopreCompileJSPs -di
 
 #Map users
 AdminTask.createUser('[-uid db2user/websphere -cn db2 -sn user -password password -confirmPassword password]')
-AdminApp.edit('was-kerberos-database_war', '[ -MapRolesToUsers [[ Manager AppDeploymentOption.No AppDeploymentOption.Yes wsadmin|db2user/websphere "" AppDeploymentOption.No user:defaultWIMFileBasedRealm/uid=wsadmin,o=defaultWIMFileBasedRealm|user:defaultWIMFileBasedRealm/uid=db2user/websphere,o=defaultWIMFileBasedRealm "" ]]]' ) 
-
+AdminApp.edit('was-kerberos-database_war', '[ -MapRolesToUsers [[ Manager AppDeploymentOption.No AppDeploymentOption.No db2user/websphere "" AppDeploymentOption.No user:defaultWIMFileBasedRealm/uid=db2user/websphere,o=defaultWIMFileBasedRealm "" ]]]' )
 
 AdminConfig.save()
