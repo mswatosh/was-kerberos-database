@@ -40,7 +40,7 @@ server = AdminConfig.getid('/Server:'+serverName+'/')
 print server
 tc = AdminConfig.list('TraceService', server)
 print tc
-traceSpec = "*=info: WAS.j2c=all: RRA=all :com.ibm.ws.security.*=all:com.ibm.websphere.security.*=all"
+traceSpec = "*=info"#: WAS.j2c=all: RRA=all :com.ibm.ws.security.*=all:com.ibm.websphere.security.*=all"
 print traceSpec
 attrs = [["startupTraceSpecification", traceSpec]]
 print attrs

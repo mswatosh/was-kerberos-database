@@ -1,6 +1,6 @@
 # was-kerberos-database
 
-## This is an experimentation environment for Database access on WebSphere with Kerberos. Practices demonstrated here are not necessarily recommended or secure. This doesn't fully work in its current form. Use at your own risk.
+## This is an experimentation environment for Database access on WebSphere with Kerberos. Practices demonstrated here are not necessarily recommended or secure. Use at your own risk.
 
 ### Overview
 
@@ -22,28 +22,31 @@ http://localhost:9080/was-kerberos-database/example
 Which will respond with:  `java.sql.SQLInvalidAuthorizationSpecException: [jcc][t4][201][11237][4.25.13] Connection authorization failure occurred. Reason: Security mechanism not supported. `  
 This shows that DB2 won't accept user/password, because it is expecting kerberos authentication.
 
-### WebSphere traditional
-**Not working. Needs kerberos errors investigated**   
-WAS side driver config??
-
+### WebSphere traditional 
 Also needs `./gradlew libertyPackage` run to copy the db2 driver and app to the correct directory.
 
 `keberos.py` is the admin script for configuring kerberos and datasources  
 `installApps.py` is the admin script for installing the application
 
+
+
+The application can be accessed at the endpoint:  
+http://localhost:9080/was-kerberos-database/example  
+username: db2user/websphere  
+password: password
+
 Admin Console: https://localhost:9043/ibm/console/  
 User: wsadmin  
 Password: password
 
-The application can be accessed at the endpoint:  
-`http://localhost:9080/was-kerberos-database/example`
-
-/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython
+WSAdmin testing:  
+`/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython`
 
 ### Kerberos
 Realm: EXAMPLE.COM  
-User: db2user/db2@EXAMPLE.COM
-User: db2user/websphere@EXAMPLE.COM
+User: db2user/db2@EXAMPLE.COM  
+User: db2user/websphere@EXAMPLE.COM  
+User: wsadmin@EXAMPLE.COM
 
 
 ### DB2
