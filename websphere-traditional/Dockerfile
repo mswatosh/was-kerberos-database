@@ -12,12 +12,12 @@ RUN printf 'add_entry -password -p wsadmin/websphere@EXAMPLE.COM -k 1 -e aes256-
 
 COPY --chown=was:root tmp/PASSWORD /tmp/PASSWORD
 COPY --chown=was:root docker-entrypoint.sh /docker-entrypoint.sh
-COPY --chown=was:root work/config/kerberos.py /work/config/kerberos.py
+COPY --chown=was:root work/config/configure.py /work/config/configure.py
 COPY --chown=was:root work/config/installApps.py /work/config/installApps.py
 COPY --chown=was:root ./build/libs/was-kerberos-database.war /work/app/
 RUN chmod a+x /docker-entrypoint.sh
-#kerberos.py is run in docker-entrypoint.sh
-RUN chmod a+x /work/config/kerberos.py 
+#configure.py is run in docker-entrypoint.sh
+RUN chmod a+x /work/config/configure.py 
 RUN /work/configure.sh /work/config/installApps.py
 
 COPY ./build/dependencies/db2jcc.jar /opt/drivers/db2jcc.jar
