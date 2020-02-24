@@ -1,7 +1,6 @@
 <server>
 
   <featureManager>
-    <feature>spnego-1.0</feature>
     <feature>servlet-4.0</feature>
     <feature>jdbc-4.2</feature>
     <feature>appSecurity-2.0</feature>
@@ -17,11 +16,35 @@
     <fileset dir="/opt/ol/wlp/usr/shared/" includes="krb5LoginModule.jar"/>
   </library>
 
+  <webApplication id="was-kerberos-database" location="was-kerberos-database.war" name="was-kerberos-database">
+    <application-bnd>
+      <security-role name="Manager" id="Manager">
+        <user name="user1"/>
+      </security-role>
+      <security-role name="Employee" id="Employee">
+        <user name="user2"/>
+      </security-role>
+    </application-bnd>
+  </webApplication>
+
+  <basicRegistry realm="defaultRealm">
+    <user password="password" name="user1"/>
+    <user password="password" name="user2" />
+  </basicRegistry>
+
+  <!--
   <jaasLoginContextEntry id="krb5JAASLoginEntry" name="krb5JAASLoginEntry" loginModuleRef="krb5LoginModule" />
 	<jaasLoginModule id="krb5LoginModule" className="com.ibm.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
     <options credsType="both" useKeytab="/etc/krb5.keytab" principal="db2user/db2@EXAMPLE.COM"/>
   </jaasLoginModule>
+-->
   <dataSource id="db2ds" jndiName="jdbc/db2ds"> <!--jaasLoginContextEntry="krb5JAASLoginEntry">-->
+    <jdbcDriver libraryRef="DB2JCCLib"/>
+    <properties.db2.jcc databaseName="TESTDB" serverName="db2" portNumber="50000"/> <!--securityMechanism="11" KerberosServerPrincipal="db2user/db2@EXAMPLE.COM"/>-->
+    <containerAuthData user="db2user"  password="password"/>
+  </dataSource>
+
+  <dataSource id="noKrb5" jndiName="jdbc/nokrb5"> <!--jaasLoginContextEntry="krb5JAASLoginEntry">-->
     <jdbcDriver libraryRef="DB2JCCLib"/>
     <properties.db2.jcc databaseName="TESTDB" serverName="db2" portNumber="50000"/> <!--securityMechanism="11" KerberosServerPrincipal="db2user/db2@EXAMPLE.COM"/>-->
     <containerAuthData user="db2user"  password="password"/>

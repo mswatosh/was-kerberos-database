@@ -64,6 +64,7 @@ ext {
 liberty {
     server {
         name = "defaultServer"
+        looseApplication = false
 
         configFile = file("liberty/server.xml")
 

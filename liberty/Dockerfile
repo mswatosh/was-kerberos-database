@@ -16,7 +16,7 @@ RUN chmod a+x /docker-entrypoint.sh
 #COPY /updates /liberty
 
 COPY server.xml /opt/ol/wlp/usr/servers/defaultServer/server.xml
-COPY ./build/libs/was-kerberos-database.war /opt/ol/wlp/usr/servers/defaultServer/dropins/was-kerberos-database.war
+COPY ./build/libs/was-kerberos-database.war /opt/ol/wlp/usr/servers/defaultServer/apps/was-kerberos-database.war
 COPY ./build/dependencies/db2jcc.jar /opt/ol/wlp/usr/shared/db2jcc.jar
 COPY ./build/libs/krb5LoginModule.jar /opt/ol/wlp/usr/shared/krb5LoginModule.jar
 COPY jaas.conf /kerberos/jaas.conf
