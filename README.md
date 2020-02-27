@@ -4,24 +4,16 @@
 
 ### Overview
 
-The docker compose environment sets up a KDC (working), Database (DB2, probably working), and an application server (Liberty or WebSphere traditional, **not working**) with kerberos configured in each image. 
+The docker compose environment sets up a KDC , Database (DB2), and an application server (WebSphere traditional or Liberty) with kerberos configured in each image. 
 
 May require OpenJ9 Java 8. Tested with OpenJ9/OpenJDK 1.8.0_232
 
-Bring up the environment with:
+Bring up the WebSphere traditional environment with:
 ```
 ./gradlew libertyPackage
 docker-compose build
 docker-compose up
 ```
-### Liberty (Currently disabled)
-**Liberty doesn't support accessing databases using kerberos**
-
-Once the environment is up (db2 usually takes the longest to start) this endpoint can be used to access the database:  
-http://localhost:9080/was-kerberos-database/example
-Which will respond with:  `java.sql.SQLInvalidAuthorizationSpecException: [jcc][t4][201][11237][4.25.13] Connection authorization failure occurred. Reason: Security mechanism not supported. `  
-This shows that DB2 won't accept user/password, because it is expecting kerberos authentication.
-
 ### WebSphere traditional 
 Also needs `./gradlew libertyPackage` run to copy the db2 driver and app to the correct directory.
 
@@ -41,6 +33,21 @@ Password: password
 
 WSAdmin testing:  
 `/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython`
+
+### Liberty (Currently disabled)
+**Liberty doesn't support accessing databases using kerberos**
+
+The Liberty environment is in liberty.yml
+```
+./gradlew libertyPackage
+docker-compose -f liberty.yml build
+docker-compose -f liberty.yml up
+```
+
+Once the environment is up (db2 usually takes the longest to start) this endpoint can be used to access the database:  
+http://localhost:9080/was-kerberos-database/example
+Which will respond with:  `java.sql.SQLInvalidAuthorizationSpecException: [jcc][t4][201][11237][4.25.13] Connection authorization failure occurred. Reason: Security mechanism not supported. `  
+This shows that DB2 won't accept user/password, because it is expecting kerberos authentication.
 
 ### Kerberos
 Realm: EXAMPLE.COM  

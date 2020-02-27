@@ -79,16 +79,6 @@ liberty {
     }
 }
 
-ext.appExcludes = []
-
-task loginJar(type: Jar) {
-    from(sourceSets.main.output) {
-        include "com/example/login/**"
-        project.ext.appExcludes.addAll(includes)
-        archiveFileName = "krb5LoginModule.jar"
-    }
-}
-
 task packageWebSphere(type: Copy) {
     from "liberty/build"
     into "websphere-traditional/build"
@@ -97,7 +87,6 @@ task packageWebSphere(type: Copy) {
 war {
     from (sourceSets.main.output) {
         archiveName = "${baseName}.${extension}"
-        exclude project.ext.appExcludes
     }
 }
 
@@ -105,7 +94,6 @@ clean.dependsOn 'libertyStop'
 libertyPackage.dependsOn 'libertyStop'
 libertyPackage.dependsOn 'copyDependenciesLiberty'
 libertyPackage.dependsOn 'copyDependenciesWebSphere'
-libertyPackage.dependsOn 'loginJar'
 composeUp.dependsOn 'libertyPackage'
 composeUp.dependsOn 'composeDown'
 composeUp.dependsOn 'composeBuild'
