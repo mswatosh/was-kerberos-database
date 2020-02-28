@@ -1,0 +1,54 @@
+version: '3'
+volumes:
+    krb5kdc-data:
+services:
+  liberty:
+    build:
+      context: ./liberty
+      dockerfile: mssql.Dockerfile
+    ports:
+      - "9080:9080"
+      - "443:443"
+    environment:
+      - KRB5_REALM=EXAMPLE.COM
+      - KRB5_KDC=kerberos
+    depends_on: 
+      - "sqlserver"
+    networks:
+      krbnet:
+        ipv4_address: 10.5.0.4 
+    volumes:
+      - ./trace/liberty/logs:/logs
+  sqlserver:
+    build: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - KRB5_REALM=EXAMPLE.COM
+      - KRB5_KDC=kerberos
+    privileged: True
+    depends_on: 
+      - "kerberos"
+    networks:
+      krbnet:
+        ipv4_address: 10.5.0.5
+  kerberos:
+    build: kdc-server
+    ports:
+      - "88:88"
+      - "464:464"
+      - "749:749"
+    environment:
+      - KRB5_REALM=EXAMPLE.COM
+      - KRB5_KDC=localhost
+      - KRB5_PASS=password
+    volumes:
+      - krb5kdc-data:/var/lib/krb5kdc
+    networks:
+      krbnet:
+        ipv4_address: 10.5.0.9
+networks:
+  krbnet:   
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16

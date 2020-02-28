@@ -46,7 +46,7 @@ public class ExampleServlet extends HttpServlet {
             try {
                 stmt.execute("DROP TABLE krb5test");
             } catch (SQLException x) {
-                if (!"42704".equals(x.getSQLState()))
+                if (!("42704".equals(x.getSQLState()) || "S0005".equals(x.getSQLState())))
                     throw x;
             }
             stmt.execute("CREATE TABLE krb5test (ID SMALLINT NOT NULL PRIMARY KEY, STRVAL NVARCHAR(40))");

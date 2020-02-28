@@ -38,19 +38,24 @@ dependencies {
     testCompile group:'junit', name:'junit', version:'4.12'
     libertyRuntime group:'io.openliberty', name:'openliberty-runtime', version:'[17.0.0.4,)'
     runtime group: 'com.ibm.db2.jcc', name: 'db2jcc', version: 'db2jcc4'
+    runtime group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '8.2.1.jre8'
 }
 
 task copyDependenciesLiberty(type: Copy) {
    from configurations.runtime
    include 'db2jcc*'
+   include 'mssql*'
    rename 'db2jcc(.*)', 'db2jcc.jar'
+   rename 'mssql(.*)', 'mssql.jar'
    into 'liberty/build/dependencies'
 }
 
 task copyDependenciesWebSphere(type: Copy) {
    from configurations.runtime
    include 'db2jcc*'
+   include 'mssql*'
    rename 'db2jcc(.*)', 'db2jcc.jar'
+   rename 'mssql(.*)', 'mssql.jar'
    into 'websphere-traditional/build/dependencies'
 }
 

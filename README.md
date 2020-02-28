@@ -34,7 +34,7 @@ Password: password
 WSAdmin testing:  
 `/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython`
 
-### Liberty (Currently disabled)
+### Liberty
 **Liberty doesn't support accessing databases using kerberos**
 
 The Liberty environment is in liberty.yml
@@ -48,6 +48,13 @@ Once the environment is up (db2 usually takes the longest to start) this endpoin
 http://localhost:9080/was-kerberos-database/example
 Which will respond with:  `java.sql.SQLInvalidAuthorizationSpecException: [jcc][t4][201][11237][4.25.13] Connection authorization failure occurred. Reason: Security mechanism not supported. `  
 This shows that DB2 won't accept user/password, because it is expecting kerberos authentication.
+
+### Liberty with SQLServer
+**Liberty doesn't support accessing databases using kerberos**
+
+The compose environment for Liberty with SQL Server is liberty-mssql.yml  
+Currently there is no kerberos configured for SQLServer
+
 
 ### Kerberos
 Realm: EXAMPLE.COM  

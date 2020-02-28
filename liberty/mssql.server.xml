@@ -1,0 +1,62 @@
+<server>
+
+  <featureManager>
+    <feature>servlet-4.0</feature>
+    <feature>jdbc-4.2</feature>
+    <feature>appSecurity-2.0</feature>
+    <feature>jca-1.7</feature>
+    <feature>cdi-2.0</feature>
+  </featureManager>
+
+  <library id="MSSQLLIB">
+    <fileset dir="/opt/ol/wlp/usr/shared/" includes="mssql.jar"/>
+  </library>
+
+  <library id="loginLib">
+  </library>
+
+  <webApplication id="was-kerberos-database" location="was-kerberos-database.war" name="was-kerberos-database">
+    <application-bnd>
+      <security-role name="Manager" id="Manager">
+        <user name="user1"/>
+      </security-role>
+      <security-role name="Employee" id="Employee">
+        <user name="user2"/>
+      </security-role>
+    </application-bnd>
+  </webApplication>
+
+  <basicRegistry realm="defaultRealm">
+    <user password="password" name="user1"/>
+    <user password="password" name="user2" />
+  </basicRegistry>
+
+  <!-- Must be named JaasClient for the JCC driver -->
+  <jaasLoginContextEntry id="JaasClient" name="JaasClient" loginModuleRef="krb5LoginModule" />
+	<jaasLoginModule id="krb5LoginModule" className="com.ibm.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
+    <options credsType="both" useKeytab="/etc/krb5.keytab" principal="db2user/websphere@EXAMPLE.COM"/>- <!-- debug="false" useDefaultCcache="true" -->
+  </jaasLoginModule>
+
+  <dataSource id="db2ds" jndiName="jdbc/db2ds">
+    <jdbcDriver libraryRef="MSSQLLIB"/>
+    <properties.microsoft.sqlserver databaseName="TESTDB" serverName="sqlserver" portNumber="1433"/>
+  </dataSource>
+
+  <dataSource id="noKrb5" jndiName="jdbc/nokrb5">
+    <jdbcDriver libraryRef="MSSQLLIB"/>
+    <properties.microsoft.sqlserver databaseName="TESTDB" serverName="sqlserver" portNumber="1433"/>
+    <containerAuthData user="SA"  password="P@ssw0rd"/>
+  </dataSource>
+
+  <!--
+  <spnego
+    includeClientGSSCredentialInSubject="true"
+    krb5Config="/etc/krb5.conf"
+    krb5Keytab="/etc/krb5.keytab"/>
+  -->
+  <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all"/>
+  <!--
+    <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all:com.microsoft.sqlserver.*=all:SSL=all:com.ibm.ws.security.*=all:com.ibm.ws.security.policy.*=off"/>
+  -->
+
+</server>
