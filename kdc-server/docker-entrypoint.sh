@@ -97,6 +97,11 @@ EOT
     echo "Creating wsadmin/websphere Account"
     kadmin.local -q "addprinc -pw ${KRB5_PASS} wsadmin@${KRB5_REALM}"
 
+    echo "Creating sqluser/sqlserver Account"
+    kadmin.local -q "addprinc -pw ${KRB5_PASS} sqluser/sqlserver@${KRB5_REALM}"
+
+    echo "Creating MSSQLSvc/sqlserver Account"
+    kadmin.local -q "addprinc -pw ${KRB5_PASS} MSSQLSvc/sqlserver:1433@${KRB5_REALM}"
 
 fi
 

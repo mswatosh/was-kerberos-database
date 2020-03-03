@@ -8,6 +8,8 @@ RUN chmod 777 /etc
 RUN mkdir /etc/krb5
 RUN printf 'add_entry -password -p db2user/db2@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
 RUN printf 'add_entry -password -p db2user/websphere@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
+RUN printf 'add_entry -password -p sqluser/sqlserver@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
+
 
 ADD docker-entrypoint.sh /
 RUN chmod a+x /docker-entrypoint.sh

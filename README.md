@@ -55,6 +55,22 @@ This shows that DB2 won't accept user/password, because it is expecting kerberos
 The compose environment for Liberty with SQL Server is liberty-mssql.yml  
 Currently there is no kerberos configured for SQLServer
 
+SQLServer cmd line  
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P P@ssw0rd
+
+```
+SELECT auth_scheme FROM sys.dm_exec_connections  
+GO
+```
+
+Currently getting the following when trying to login locally without user/pass:
+```
+2020-03-03 21:32:10.75 Logon       Error: 18452, Severity: 14, State: 1.
+2020-03-03 21:32:10.75 Logon       Login failed. The login is from an untrusted domain and cannot be used with Integrated authentication. [CLIENT: 10.5.0.5]
+```
+`Error: 18452, Severity: 14, State: 1 - The login may use Windows Authentication but the login is an unrecognized Windows principal. An unrecognized Windows principal means that Windows can't verify the login. This might be because the Windows login is from an untrusted domain.`
+
+My guess is this is due to the lack of Active Directory server, and that this will not be possible without one.
 
 ### Kerberos
 Realm: EXAMPLE.COM  
