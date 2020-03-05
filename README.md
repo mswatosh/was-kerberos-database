@@ -8,14 +8,15 @@ The docker compose environment sets up a KDC , Database (DB2), and an applicatio
 
 May require OpenJ9 Java 8. Tested with OpenJ9/OpenJDK 1.8.0_232
 
+### WebSphere traditional 
+
 Bring up the WebSphere traditional environment with:
-```
-./gradlew libertyPackage
+
+``` sh
+./gradlew libertyPackage #create app and copy database drivers
 docker-compose build
 docker-compose up
 ```
-### WebSphere traditional 
-Also needs `./gradlew libertyPackage` run to copy the db2 driver and app to the correct directory.
 
 `keberos.py` is the admin script for configuring kerberos and datasources  
 `installApps.py` is the admin script for installing the application
@@ -35,10 +36,16 @@ WSAdmin testing:
 `/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython`
 
 ### Liberty
+
 **Liberty doesn't support accessing databases using kerberos**
 
-The Liberty environment is in liberty.yml
-```
+The Liberty environment is in `liberty.yml`
+
+#### DB2
+
+The compose environment for Liberty with DB2 is `liberty-db2.yml`
+
+```sh
 ./gradlew libertyPackage
 docker-compose -f liberty.yml build
 docker-compose -f liberty.yml up
@@ -49,36 +56,122 @@ http://localhost:9080/was-kerberos-database/example
 Which will respond with:  `java.sql.SQLInvalidAuthorizationSpecException: [jcc][t4][201][11237][4.25.13] Connection authorization failure occurred. Reason: Security mechanism not supported. `  
 This shows that DB2 won't accept user/password, because it is expecting kerberos authentication.
 
-### Liberty with SQLServer
-**Liberty doesn't support accessing databases using kerberos**
+#### SQLServer
 
-The compose environment for Liberty with SQL Server is liberty-mssql.yml  
+The compose environment for Liberty with SQLServer is `liberty-mssql.yml` 
 Currently there is no kerberos configured for SQLServer
+
+```sh
+./gradlew libertyPackage
+docker-compose -f liberty-mssql.yml build
+docker-compose -f liberty-mssql.yml up
+```
 
 SQLServer cmd line  
 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P P@ssw0rd
 
-```
+```sql
 SELECT auth_scheme FROM sys.dm_exec_connections  
 GO
 ```
 
 Currently getting the following when trying to login locally without user/pass:
-```
+```txt
 2020-03-03 21:32:10.75 Logon       Error: 18452, Severity: 14, State: 1.
 2020-03-03 21:32:10.75 Logon       Login failed. The login is from an untrusted domain and cannot be used with Integrated authentication. [CLIENT: 10.5.0.5]
 ```
-`Error: 18452, Severity: 14, State: 1 - The login may use Windows Authentication but the login is an unrecognized Windows principal. An unrecognized Windows principal means that Windows can't verify the login. This might be because the Windows login is from an untrusted domain.`
+
+```txt
+Error: 18452, Severity: 14, State: 1 - The login may use Windows Authentication but the login is an unrecognized Windows principal. An unrecognized Windows principal means that Windows can't verify the login. This might be because the Windows login is from an untrusted domain.
+```
 
 My guess is this is due to the lack of Active Directory server, and that this will not be possible without one.
 
 https://github.com/microsoft/mssql-docker/issues/165
 
+#### Oracle
+
+The compose environment for Liberty with Oracle is `liberty-oracle.yml`
+Currently there is no kerberos configured for Oracle
+
+```sh
+./gradlew buildOracleBase
+./gradlew libertyPackage
+docker-compose -f liberty-oracle.yml build
+docker-compose -f liberty-oracle.yml up
+docker-compose -f liberty-oracle.yml down -v #Bring down and remove volume (so oracle data is not persisted)
+```
+
+Access oracle using sqlplus:
+```sh
+# Access oracle using default (BEQ) authentication
+docker exec -it --user oracle was-kerberos-database_oracle_1 /bin/sh -c 'sqlplus / as sysdba'
+
+# Access oracle using Kerberos Authentication
+docker exec -it --user oracle was-kerberos-database_oracle_1 /bin/sh -c 'sqlplus /@XE'
+
+# Interactive access to oracle using Kerberos Authentciation 
+$ docker exec -it oracle was-kerberos-database_oracle_1
+sh-4.2$ su oracle
+[oracle@oracle /]$ sqlplus /@XE
+```
+
+Access oracle container:
+`docker exec -it was-kerberos-database_oracle_1 /bin/sh`
+
+#### Current Status
+When trying to authenticate with Kerberos using `sqlplus /@XE` sqlplus returns the error:
+```txt
+ERROR:
+ORA-01017: invalid username/password; logon denied
+```
+
+Looking at the kerberos logs we see the authentication transaction take place:
+```sh
+# Oracle user was authenticated and a the AS_REQ was issued
+Mar 23 21:35:22 99364b92d0d9 krb5kdc[28](info): AS_REQ (8 etypes {18 17 20 19 16 23 25 26}) 10.5.0.11: NEEDED_PREAUTH: XE/oracle@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM, Additional pre-authentication required
+Mar 23 21:35:22 99364b92d0d9 krb5kdc[28](info): AS_REQ (8 etypes {18 17 20 19 16 23 25 26}) 10.5.0.11: ISSUE: authtime 1584999322, etypes {rep=18 tkt=18 ses=18}, XE/oracle@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM
+# A request for the TGS came through, and was issued
+Mar 23 21:35:40 99364b92d0d9 krb5kdc[28](info): TGS_REQ (8 etypes {18 17 20 19 16 23 25 26}) 10.5.0.11: ISSUE: authtime 1584999322, etypes {rep=18 tkt=18 ses=18}, XE/oracle@EXAMPLE.COM for XE/oracle@EXAMPLE.COM
+Mar 23 21:35:40 99364b92d0d9 krb5kdc[28](info): TGS_REQ (1 etypes {18}) 10.5.0.11: ISSUE: authtime 1584999322, etypes {rep=18 tkt=18 ses=18}, XE/oracle@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM
+```
+
+Then on the oracle side we get the following error output (After 2 minutes):
+```sh
+oracle_1    | ***********************************************************************
+oracle_1    |
+oracle_1    | Fatal NI connect error 12170.
+oracle_1    |
+oracle_1    |   VERSION INFORMATION:
+oracle_1    | 	TNS for Linux: Version 18.0.0.0.0 - Production
+oracle_1    | 	Oracle Bequeath NT Protocol Adapter for Linux: Version 18.0.0.0.0 - Production
+oracle_1    | 	TCP/IP NT Protocol Adapter for Linux: Version 18.0.0.0.0 - Production
+oracle_1    |   Version 18.4.0.0.0
+oracle_1    |   Time: 23-MAR-2020 21:37:40
+oracle_1    |   Tracing not turned on.
+oracle_1    |   Tns error struct:
+oracle_1    |     ns main err code: 12535
+oracle_1    |
+oracle_1    | TNS-12535: TNS:operation timed out
+oracle_1    |     ns secondary err code: 12606
+oracle_1    |     nt main err code: 0
+oracle_1    |     nt secondary err code: 0
+oracle_1    |     nt OS err code: 0
+oracle_1    |   Client address: (ADDRESS=(PROTOCOL=tcp)(HOST=127.0.0.1)(PORT=35334))
+oracle_1    | 2020-03-23T21:37:40.003997+00:00
+oracle_1    | WARNING: inbound connection timed out (ORA-3136)
+```
 ### Kerberos
+
+Access Kerberos admin tooling
+```sh
+docker exec -it was-kerberos-database_kerberos_1 /bin/sh -c kadmin.local
+```
+
 Realm: EXAMPLE.COM  
 User: dbuser@EXAMPLE.COM  
 User: wsadmin@EXAMPLE.COM  
-WAS Service: wassrvc/websphere@EXAMPLE.COM  
+WAS Service: wassrvc/websphere@EXAMPLE.COM
 DB2 Service: db2srvc@EXAMPLE.COM  
 DB2 User: db2inst1@EXAMPLE.COM  
 
@@ -98,3 +191,4 @@ DB2 Logs: /database/config/db2user/sqllib/db2dump/DIAG0000/
 ### Links
 [Configure Kerberos in WAS](https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.5/com.ibm.websphere.base.doc/ae/tsec_kerb_setup.html)  
 [Configure Kerberos in DB2](https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.sec.doc/doc/c0058525.html)
+[Configure Kerberos in Oracle](https://docs.oracle.com/en/database/oracle/oracle-database/20/dbseg/configuring-kerberos-authentication.html#GUID-39A6604D-35DD-40E5-A71E-079EE7C9DF15)

@@ -39,14 +39,17 @@ dependencies {
     libertyRuntime group:'io.openliberty', name:'openliberty-runtime', version:'[17.0.0.4,)'
     runtime group: 'com.ibm.db2.jcc', name: 'db2jcc', version: 'db2jcc4'
     runtime group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '8.2.1.jre8'
+    runtime (group: 'com.oracle.ojdbc', name: 'ojdbc8_g', version: '19.3.0.0') { transitive = false }
 }
 
 task copyDependenciesLiberty(type: Copy) {
    from configurations.runtime
    include 'db2jcc*'
    include 'mssql*'
+   include 'ojdbc8_g*'
    rename 'db2jcc(.*)', 'db2jcc.jar'
    rename 'mssql(.*)', 'mssql.jar'
+   rename 'ojdbc8_g(.*)', 'ojdbc8_g.jar'
    into 'liberty/build/dependencies'
 }
 
@@ -54,8 +57,10 @@ task copyDependenciesWebSphere(type: Copy) {
    from configurations.runtime
    include 'db2jcc*'
    include 'mssql*'
+   include 'ojdbc8_g*'
    rename 'db2jcc(.*)', 'db2jcc.jar'
    rename 'mssql(.*)', 'mssql.jar'
+   rename 'ojdbc8_g(.*)', 'ojdbc8_g.jar'
    into 'websphere-traditional/build/dependencies'
 }
 
@@ -99,6 +104,7 @@ clean.dependsOn 'libertyStop'
 libertyPackage.dependsOn 'libertyStop'
 libertyPackage.dependsOn 'copyDependenciesLiberty'
 libertyPackage.dependsOn 'copyDependenciesWebSphere'
+composeBuild.dependsOn 'oracle:prebuildOracle'
 composeUp.dependsOn 'libertyPackage'
 composeUp.dependsOn 'composeDown'
 composeUp.dependsOn 'composeBuild'
