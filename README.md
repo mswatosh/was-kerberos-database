@@ -72,6 +72,8 @@ Currently getting the following when trying to login locally without user/pass:
 
 My guess is this is due to the lack of Active Directory server, and that this will not be possible without one.
 
+https://github.com/microsoft/mssql-docker/issues/165
+
 ### Kerberos
 Realm: EXAMPLE.COM  
 User: db2user/db2@EXAMPLE.COM  

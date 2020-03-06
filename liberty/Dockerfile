@@ -1,4 +1,4 @@
-FROM open-liberty
+FROM open-liberty:full
 
 USER root
 

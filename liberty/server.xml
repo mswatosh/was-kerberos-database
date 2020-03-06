@@ -1,6 +1,7 @@
 <server>
 
   <featureManager>
+    <!--<feature>spnego-1.0</feature>-->
     <feature>servlet-4.0</feature>
     <feature>jdbc-4.2</feature>
     <feature>appSecurity-2.0</feature>
@@ -33,9 +34,15 @@
 
   <!-- Must be named JaasClient for the JCC driver -->
   <jaasLoginContextEntry id="JaasClient" name="JaasClient" loginModuleRef="krb5LoginModule" />
-	<jaasLoginModule id="krb5LoginModule" className="com.ibm.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
-    <options credsType="both" useKeytab="/etc/krb5.keytab" principal="db2user/websphere@EXAMPLE.COM"/>- <!-- debug="false" useDefaultCcache="true" -->
+  <!-- OpenJ9 loginModule config -->
+	<jaasLoginModule id="krb5LoginModule" className="com.sun.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
+    <options credsType="both" useKeyTab="true" keyTab="/etc/krb5.keytab" principal="db2user/websphere@EXAMPLE.COM" doNotPrompt="true"/>
   </jaasLoginModule>
+
+  <!-- IBM Java loginModule config -->
+  <!-- <jaasLoginModule id="krb5LoginModule" className="com.ibm.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
+    <options credsType="both" useKeytab="/etc/krb5.keytab" principal="db2user/websphere@EXAMPLE.COM"/>
+  </jaasLoginModule> -->
 
   <dataSource id="db2ds" jndiName="jdbc/db2ds" jaasLoginContextEntry="JaasClient">
     <jdbcDriver libraryRef="DB2JCCLib"/>
@@ -51,11 +58,12 @@
 
   <!--
   <spnego
+    servicePrincipalNames="db2user/websphere"
     includeClientGSSCredentialInSubject="true"
     krb5Config="/etc/krb5.conf"
     krb5Keytab="/etc/krb5.keytab"/>
   -->
-  <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all"/>
+  <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all:SSL=all:com.ibm.ws.security.*=all"/>
   <!--
     <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all:com.microsoft.sqlserver.*=all:SSL=all:com.ibm.ws.security.*=all:com.ibm.ws.security.policy.*=off"/>
   -->
