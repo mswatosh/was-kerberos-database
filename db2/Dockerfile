@@ -11,14 +11,15 @@ COPY var/custom/createschema.sh /var/custom/createschema.sh
 RUN chmod a+x /var/custom/createschema.sh
 
 ENV LICENSE=accept
-ENV DB2INSTANCE=db2user
+ENV DB2INSTANCE=db2inst1
 ENV DB2INST1_PASSWORD=password
 ENV DBNAME=testdb
 ENV AUTOCONFIG=false
 ENV ARCHIVE_LOGS=false
 
 RUN mkdir /etc/krb5
-RUN printf 'add_entry -password -p db2user/db2@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
+RUN printf 'add_entry -password -p db2srvc/db2@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
 RUN printf 'add_entry -password -p db2user/websphere@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
+RUN printf 'add_entry -password -p db2inst1/db2@EXAMPLE.COM -k 1 -e aes256-cts\npassword\nwkt /etc/krb5.keytab' | ktutil
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -76,7 +76,7 @@ https://github.com/microsoft/mssql-docker/issues/165
 
 ### Kerberos
 Realm: EXAMPLE.COM  
-User: db2user/db2@EXAMPLE.COM  
+User: db2srvc/db2@EXAMPLE.COM  
 User: db2user/websphere@EXAMPLE.COM  
 User: wsadmin@EXAMPLE.COM
 
@@ -85,6 +85,9 @@ User: wsadmin@EXAMPLE.COM
 The Dockerfile installs kerberos libs, and copies `docker-entrypoint.sh` and `createschema.sh` into the image.  
 `docker-entrypoint.sh` creates the krb5.conf and starts the database.  
 `createschema.sh` updates the database configuration for kerberos, runs kinit with the user, and starts db2 admin.
+
+The db2 user account is db2inst1  
+The db2 kerberos service is db2srvc/db2@EXAMPLE.COM
 
 DB2 Logs: /database/config/db2user/sqllib/db2dump/DIAG0000/
 
