@@ -76,9 +76,11 @@ https://github.com/microsoft/mssql-docker/issues/165
 
 ### Kerberos
 Realm: EXAMPLE.COM  
-User: db2srvc@EXAMPLE.COM  
-User: db2user/websphere@EXAMPLE.COM  
-User: wsadmin@EXAMPLE.COM
+User: dbuser@EXAMPLE.COM  
+User: wsadmin@EXAMPLE.COM  
+WAS Service: wassrvc/websphere@EXAMPLE.COM  
+DB2 Service: db2srvc@EXAMPLE.COM  
+DB2 User: db2inst1@EXAMPLE.COM  
 
 
 ### DB2

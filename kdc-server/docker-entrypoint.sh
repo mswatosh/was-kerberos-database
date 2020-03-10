@@ -91,14 +91,14 @@ EOT
     echo "Creating db2inst1 Account"
     kadmin.local -q "addprinc -pw ${KRB5_PASS} db2inst1@${KRB5_REALM}"
 
-    echo "Creating db2user/websphere Account"
-    kadmin.local -q "addprinc -pw ${KRB5_PASS} db2user/websphere@${KRB5_REALM}"
+    echo "Creating dbuser Account"
+    kadmin.local -q "addprinc -pw ${KRB5_PASS} dbuser@${KRB5_REALM}"
 
-    echo "Creating wsadmin/websphere Account"
-    kadmin.local -q "addprinc -pw ${KRB5_PASS} wsadmin/websphere@${KRB5_REALM}"
-
-    echo "Creating wsadmin/websphere Account"
+    echo "Creating wsadmin Account"
     kadmin.local -q "addprinc -pw ${KRB5_PASS} wsadmin@${KRB5_REALM}"
+
+    echo "Creating wassrvc/websphere Account"
+    kadmin.local -q "addprinc -pw ${KRB5_PASS} wassrvc/websphere@${KRB5_REALM}"
 
     echo "Creating sqluser/sqlserver Account"
     kadmin.local -q "addprinc -pw ${KRB5_PASS} sqluser/sqlserver@${KRB5_REALM}"

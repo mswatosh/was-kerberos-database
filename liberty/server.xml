@@ -36,7 +36,7 @@
   <jaasLoginContextEntry id="JaasClient" name="JaasClient" loginModuleRef="krb5LoginModule" />
   <!-- OpenJ9 loginModule config -->
 	<jaasLoginModule id="krb5LoginModule" className="com.sun.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
-    <options credsType="both" useKeyTab="true" keyTab="/etc/krb5.keytab" principal="db2user/websphere" doNotPrompt="true"/>
+    <options credsType="both" useKeyTab="true" keyTab="/etc/krb5.keytab" principal="dbuser" doNotPrompt="true"/>
   </jaasLoginModule>
 
   <!-- IBM Java loginModule config -->
@@ -46,13 +46,13 @@
 
   <dataSource id="db2ds" jndiName="jdbc/db2ds" jaasLoginContextEntry="JaasClient">
     <jdbcDriver libraryRef="DB2JCCLib"/>
-    <properties.db2.jcc databaseName="TESTDB" serverName="db2" driverType="4" portNumber="50000" securityMechanism="11" KerberosServerPrincipal="db2user/websphere" user="db2user"/>
+    <properties.db2.jcc databaseName="TESTDB" serverName="db2" driverType="4" portNumber="50000" securityMechanism="11" KerberosServerPrincipal="dbuser" user="dbuser"/>
   </dataSource>
 
   <dataSource id="noKrb5" jndiName="jdbc/nokrb5">
     <jdbcDriver libraryRef="DB2JCCLib"/>
     <properties.db2.jcc databaseName="TESTDB" serverName="db2" portNumber="50000"/>
-    <containerAuthData user="db2user"  password="password"/>
+    <containerAuthData user="dbuser"  password="password"/>
   </dataSource>
 
   <!--

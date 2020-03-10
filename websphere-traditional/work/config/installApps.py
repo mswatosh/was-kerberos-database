@@ -4,7 +4,7 @@ AdminApp.install('/work/app/was-kerberos-database.war', '[ -nopreCompileJSPs -di
 #AdminApp.edit('was-kerberos-database_war', '[ -MapResRefToEJB [[ was-kerberos-database.war "" was-kerberos-database.war,WEB-INF/web.xml jdbc/db2ds javax.sql.DataSource jdbc/db2ds KerberosMapping "" "" ]]]' ) 
 
 #Map users
-AdminTask.createUser('[-uid db2user/websphere -cn db2 -sn user -password password -confirmPassword password]')
-AdminApp.edit('was-kerberos-database_war', '[ -MapRolesToUsers [[ Manager AppDeploymentOption.No AppDeploymentOption.No db2user/websphere "" AppDeploymentOption.No user:defaultWIMFileBasedRealm/uid=db2user/websphere,o=defaultWIMFileBasedRealm "" ]]]' )
+AdminTask.createUser('[-uid dbuser -cn db -sn user -password password -confirmPassword password]')
+AdminApp.edit('was-kerberos-database_war', '[ -MapRolesToUsers [[ Manager AppDeploymentOption.No AppDeploymentOption.No dbuser "" AppDeploymentOption.No user:defaultWIMFileBasedRealm/uid=dbuser,o=defaultWIMFileBasedRealm "" ]]]' )
 
 AdminConfig.save()
