@@ -24,7 +24,7 @@ Also needs `./gradlew libertyPackage` run to copy the db2 driver and app to the 
 
 The application can be accessed at the endpoint:  
 http://localhost:9080/was-kerberos-database/example  
-username: db2user/websphere  
+username: dbuser
 password: password
 
 Admin Console: https://localhost:9043/ibm/console/  
