@@ -28,7 +28,7 @@ cat <<EOT > /etc/krb5.conf
  
  [realms]
  ${KRB5_REALM} = {
-    kdc = ${KRB5_KDC}
+    kdc = ${KRB5_KDC}:99
     admin_server = ${KRB5_ADMINSERVER}
  }
  [domain_realm]

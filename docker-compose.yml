@@ -45,7 +45,7 @@ services:
   kerberos:
     build: kdc-server
     ports:
-      - "88:88"
+      - "99:99"
       - "464:464"
       - "749:749"
     environment:

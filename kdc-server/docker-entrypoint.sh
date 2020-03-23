@@ -29,7 +29,7 @@ cat <<EOT > /etc/krb5.conf
  
  [realms]
  ${KRB5_REALM} = {
-    kdc = ${KRB5_KDC}
+    kdc = ${KRB5_KDC}:99
     admin_server = ${KRB5_ADMINSERVER}
  }
 EOT
@@ -49,8 +49,8 @@ if [ ! -f "/var/lib/krb5kdc/principal" ]; then
     echo "Creating KDC Configuration"
 cat <<EOT > /var/lib/krb5kdc/kdc.conf
 [kdcdefaults]
-    kdc_listen = 88
-    kdc_tcp_listen = 88
+    kdc_listen = 99
+    kdc_tcp_listen = 99
     
 [realms]
     ${KRB5_REALM} = {
