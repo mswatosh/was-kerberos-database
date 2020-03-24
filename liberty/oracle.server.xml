@@ -1,0 +1,54 @@
+<server>
+
+    <featureManager>
+      <feature>servlet-4.0</feature>
+      <feature>jdbc-4.2</feature>
+      <feature>appSecurity-2.0</feature>
+      <feature>jca-1.7</feature>
+      <feature>cdi-2.0</feature>
+    </featureManager>
+  
+    <library id="oracleLib">
+      <fileset dir="/opt/ol/wlp/usr/shared/" includes="ojdbc8_g.jar"/>
+    </library>
+  
+    <library id="loginLib">
+    </library>
+  
+    <webApplication id="was-kerberos-database" location="was-kerberos-database.war" name="was-kerberos-database">
+      <application-bnd>
+        <security-role name="Manager" id="Manager">
+          <user name="user1"/>
+        </security-role>
+        <security-role name="Employee" id="Employee">
+          <user name="user2"/>
+        </security-role>
+      </application-bnd>
+    </webApplication>
+  
+    <basicRegistry realm="defaultRealm">
+      <user password="password" name="user1"/>
+      <user password="password" name="user2" />
+    </basicRegistry>
+  
+    <!-- Must be named JaasClient for the JCC driver -->
+    <jaasLoginContextEntry id="JaasClient" name="JaasClient" loginModuleRef="krb5LoginModule" />
+      <jaasLoginModule id="krb5LoginModule" className="com.ibm.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
+      <options credsType="both" useKeytab="/etc/krb5.keytab" principal="oracle/websphere@EXAMPLE.COM"/>- <!-- debug="false" useDefaultCcache="true" -->
+    </jaasLoginModule>
+  
+    <dataSource id="oracle" jndiName="jdbc/oracle" jaasLoginContextEntry="JaasClient">
+      <jdbcDriver libraryRef="oracleLib"/>
+      <properties.oracle databaseName = "XE" serverName="oracle" driverType="thin" portNumber="1521"
+        user="oracle/websphere@EXAMPLE.COM" password="password"/>
+    </dataSource>
+  
+    <dataSource id="noKrb5" jndiName="jdbc/nokrb5">
+      <jdbcDriver libraryRef="oracleLib"/>
+      <properties.oracle databaseName = "XE" serverName="oracle" driverType="thin" portNumber="1521"
+      user="system" password="oracle"/>
+    </dataSource>
+  
+    <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all"/>
+  
+  </server>

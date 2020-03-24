@@ -1,0 +1,61 @@
+version: '3'
+volumes:
+    krb5kdc-data:
+services:
+  # Liberty service
+  liberty:
+    build:
+      context: ./liberty
+      dockerfile: oracle.Dockerfile
+    ports:
+      - "9080:9080"
+      - "443:443"
+    environment:
+      - KRB5_REALM=EXAMPLE.COM
+      - KRB5_KDC=kerberos
+    depends_on: 
+      - "oracle"
+    networks:
+      krbnet:
+        ipv4_address: 10.5.0.4 
+    volumes:
+      - ./trace/liberty:/logs
+  # Oracle service 
+  oracle:
+    build:
+      context: ./oracle
+    hostname: oracle
+    ports:
+        - "1521:1521"
+        - "8080:8080"
+    environment:
+        - KRB5_REALM=EXAMPLE.COM
+        - KRB5_KDC=kerberos
+    depends_on:
+        - "kerberos"
+    networks:
+        krbnet:
+            ipv4_address: 10.5.0.11
+  # Kerberos service (KDC)
+  kerberos:
+    build: kdc-server
+    ports:
+      - "88:88"
+      - "464:464"
+      - "749:749"
+    environment:
+      - KRB5_REALM=EXAMPLE.COM
+      - KRB5_KDC=localhost
+      - KRB5_PASS=password
+    volumes:
+      - krb5kdc-data:/var/lib/krb5kdc
+      - ./trace/kerberos:/var/log
+    networks:
+      krbnet:
+        ipv4_address: 10.5.0.9
+# Network (Ensure they are on the same network)
+networks:
+  krbnet:   
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16

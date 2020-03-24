@@ -1,0 +1,62 @@
+ext {
+    GITURL = "git@github.com:oracle/docker-images.git"
+    FOLDER = "docker-images"
+    //Base image from oracle
+    BASEIMAGE = "oracle/database:18.4.0-xe"
+}
+
+def imageExists(imageName) {
+    new ByteArrayOutputStream().withStream { os ->
+        def result = exec {
+            commandLine 'sh', '-c', './prebuild/checkImage.sh ' + imageName
+            standardOutput = os
+        }
+        return os.toString().toBoolean();
+    }
+}
+
+// If our base image doesn't exist, then clone the oracle project so we can build one
+task getProject {
+    doLast {
+        if(! imageExists(BASEIMAGE) ) {
+            exec {
+                commandLine 'sh', '-c', './prebuild/gitClone.sh ' + GITURL + ' ' + FOLDER
+            }
+            println "Cloned " + GITURL + " into directory " + FOLDER
+        }
+    }
+}
+
+// Build an oracle base image
+task buildOracleBase {
+    doLast {
+        if(! imageExists(BASEIMAGE) ) {
+            //Remove volume to allow us to pre-build database in later step
+            exec {
+                workingDir './docker-images/OracleDatabase/SingleInstance/dockerfiles/18.4.0/'
+                commandLine 'sed', '-i', '','s/VOLUME.*/#VOLUME/', './Dockerfile.xe'
+            }
+            //Set start-period to 10 minutes to ensure we do not fall into an unhealthy state
+            exec {
+                workingDir './docker-images/OracleDatabase/SingleInstance/dockerfiles/18.4.0/'
+                commandLine 'sed', '-i', '','s/HEALTHCHECK.*/HEALTHCHECK --interval=1m --start-period=10m\\\\ /', './Dockerfile.xe'
+            }
+            //MAC OS stalling when calling the yes command on an optional command to remove intermediary image. 
+            exec {
+               workingDir './docker-images/OracleDatabase/SingleInstance/dockerfiles/' 
+               commandLine 'sed', '-i', '','s/yes.*/#yes/', './buildDockerImage.sh'
+            }
+            //Execute the build command
+            exec {
+               workingDir './docker-images/OracleDatabase/SingleInstance/dockerfiles/' 
+               commandLine 'sh', '-c', './buildDockerImage.sh -v 18.4.0 -x'
+            }
+        }
+    }
+}
+
+buildOracleBase {
+    dependsOn getProject
+}
+
+
