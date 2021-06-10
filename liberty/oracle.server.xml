@@ -37,7 +37,7 @@
       <options credsType="both" useKeytab="/etc/krb5.keytab" principal="oracle/websphere@EXAMPLE.COM"/>- <!-- debug="false" useDefaultCcache="true" -->
     </jaasLoginModule>
   
-    <dataSource id="oracle" jndiName="jdbc/oracle" jaasLoginContextEntry="JaasClient">
+    <dataSource id="oracle" jndiName="jdbc/krb5ds"> <!-- jaasLoginContextEntry="JaasClient"> -->
       <jdbcDriver libraryRef="oracleLib"/>
       <properties.oracle databaseName = "XE" serverName="oracle" driverType="thin" portNumber="1521"
         user="oracle/websphere@EXAMPLE.COM" password="password"/>

@@ -13,3 +13,5 @@ liberty/.DS_Store
 websphere-traditional/.DS_Store
 websphere-traditional/build/
 /trace
+oracle/liberty
+ict

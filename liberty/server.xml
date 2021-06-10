@@ -35,18 +35,18 @@
   <!-- Must be named JaasClient for the JCC driver -->
   <jaasLoginContextEntry id="JaasClient" name="JaasClient" loginModuleRef="krb5LoginModule" />
   <!-- OpenJ9 loginModule config -->
-	<jaasLoginModule id="krb5LoginModule" className="com.sun.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
+	 <jaasLoginModule id="krb5LoginModule" className="com.sun.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
     <options credsType="both" useKeyTab="true" keyTab="/etc/krb5.keytab" principal="dbuser" doNotPrompt="true"/>
   </jaasLoginModule>
-
+  
   <!-- IBM Java loginModule config -->
   <!-- <jaasLoginModule id="krb5LoginModule" className="com.ibm.security.auth.module.Krb5LoginModule" controlFlag="REQUIRED" libraryRef="loginLib">
     <options credsType="both" useKeytab="/etc/krb5.keytab" principal="db2user/websphere@EXAMPLE.COM"/>
   </jaasLoginModule> -->
 
-  <dataSource id="db2ds" jndiName="jdbc/db2ds" jaasLoginContextEntry="JaasClient">
+  <dataSource id="krb5ds" jndiName="jdbc/krb5ds" jaasLoginContextEntry="JaasClient">
     <jdbcDriver libraryRef="DB2JCCLib"/>
-    <properties.db2.jcc databaseName="TESTDB" serverName="db2" driverType="4" portNumber="50000" securityMechanism="11" KerberosServerPrincipal="dbuser" user="dbuser"/>
+    <properties.db2.jcc databaseName="TESTDB" serverName="db2" driverType="4" portNumber="50000" securityMechanism="11" user="dbuser"/> <!--user="dbuser"/>-->
   </dataSource>
 
   <dataSource id="noKrb5" jndiName="jdbc/nokrb5">
@@ -62,7 +62,7 @@
     krb5Config="/etc/krb5.conf"
     krb5Keytab="/etc/krb5.keytab"/>
   -->
-  <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all:SSL=all:com.ibm.ws.security.*=all"/>
+  <logging traceSpecification="*=info:RRA=all:WAS.j2c=all"/>
   <!--
     <logging traceSpecification="*=info:RRA=all:WAS.j2c=all:WAS.database=all:com.ibm.ws.db2.logwriter=all:com.microsoft.sqlserver.*=all:SSL=all:com.ibm.ws.security.*=all:com.ibm.ws.security.policy.*=off"/>
   -->

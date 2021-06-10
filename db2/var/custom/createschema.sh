@@ -8,6 +8,8 @@ export DB2_KRB5_PRINCIPAL=db2srvc@EXAMPLE.COM
 
 kinit -k -t /etc/krb5.keytab db2inst1
 /opt/ibm/db2/V11.5/adm/db2start
+/opt/ibm/db2/V11.5/bin/db2 db2stop
+/opt/ibm/db2/V11.5/bin/db2 db2start
 
 /opt/ibm/db2/V11.5/bin/db2 CREATE DATABASE TESTDB
 EOF

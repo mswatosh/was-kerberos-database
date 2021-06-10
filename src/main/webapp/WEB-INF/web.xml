@@ -3,4 +3,12 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
 		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+
+         <!--
+         <resource-ref id="ResourceRef_1102108961944">
+            <res-ref-name>jdbc/krb5ds</res-ref-name>
+            <res-type>javax.sql.DataSource</res-type>
+            <res-auth>Application</res-auth>
+         
+      </resource-ref>-->
 </web-app>

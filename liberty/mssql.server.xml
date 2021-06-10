@@ -37,7 +37,7 @@
     <options credsType="both" useKeytab="/etc/krb5.keytab" principal="db2user/websphere@EXAMPLE.COM"/>- <!-- debug="false" useDefaultCcache="true" -->
   </jaasLoginModule>
 
-  <dataSource id="db2ds" jndiName="jdbc/db2ds">
+  <dataSource id="krb5ds" jndiName="jdbc/krb5ds">
     <jdbcDriver libraryRef="MSSQLLIB"/>
     <properties.microsoft.sqlserver databaseName="TESTDB" serverName="sqlserver" portNumber="1433"/>
   </dataSource>

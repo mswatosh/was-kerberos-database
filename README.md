@@ -35,6 +35,9 @@ Password: password
 WSAdmin testing:  
 `/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -conntype NONE -lang jython`
 
+WebSphere traditional trace is available at:
+`/trace/twas`
+
 ### Liberty
 
 **Liberty doesn't support accessing databases using kerberos**
@@ -53,8 +56,6 @@ docker-compose -f liberty.yml up
 
 Once the environment is up (db2 usually takes the longest to start) this endpoint can be used to access the database:  
 http://localhost:9080/was-kerberos-database/example
-Which will respond with:  `java.sql.SQLInvalidAuthorizationSpecException: [jcc][t4][201][11237][4.25.13] Connection authorization failure occurred. Reason: Security mechanism not supported. `  
-This shows that DB2 won't accept user/password, because it is expecting kerberos authentication.
 
 #### SQLServer
 
@@ -100,6 +101,12 @@ Currently there is no kerberos configured for Oracle
 docker-compose -f liberty-oracle.yml build
 docker-compose -f liberty-oracle.yml up
 docker-compose -f liberty-oracle.yml down -v #Bring down and remove volume (so oracle data is not persisted)
+```
+
+
+Note: If you see the following error when running `./gradlew buildOracleBase` you may need to increase your Disk image size under Docker Settings -> Resources.
+```txt
+checkSpace.sh: ERROR - There is not enough space available in the docker container.
 ```
 
 Access oracle using sqlplus:
